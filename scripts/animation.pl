@@ -9,6 +9,7 @@ use warnings;
 #   1st 4 bytes - size in bytes
 #   remaining bytes - file data
 # files are merged in alphabetical order
+# all numbers are big-endian
 
 my ($dir, $out, $fps);
 
@@ -29,7 +30,7 @@ splice(@files, 0, 2);
 open OUT, ">", $out;
 binmode OUT;
 select OUT;
-print pack("S", scalar @files);
+print pack("n", scalar @files);
 print pack("C", $fps);
 
 for (@files) {
@@ -40,7 +41,7 @@ for (@files) {
     read(FILE, $contents, -s "$dir/$_", 0);
 
     # write the file size and the contents
-    print pack("L", length $contents), $contents;
+    print pack("N", length $contents), $contents;
     close FILE;
 }
 

@@ -2,102 +2,105 @@ package objects;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 
 public class AnimatedSprite {
-	private BufferedImage[] mFrames;	// Array of frames
-	private final int mFrameTime;		// Length of each frame in milliseconds
-	private int mAnimationTime = 0;		// Time since start of animation in milliseconds
-	private boolean mPaused = false;	// If true then the animation is paused
-	private boolean mLoop = true;		// Should the animation loop
+	private BufferedImage[] frames;		// Array of frames
+	private final int frameTime;		// Length of each frame in milliseconds
+	private int animationTime = 0;		// Time since start of animation in milliseconds
+	private boolean paused = false;		// If true then the animation is paused
+	private boolean loop = true;		// Should the animation loop
+	private int frameIndex;				// Current frame index
 	
-	// Load from a concat file
-	public AnimatedSprite(InputStream file, int frameTime) {
-		mFrameTime = frameTime;
-		mFrames = new BufferedImage [filenames.length];
-		for (int i = 0; i < mFrames.length; i++) {
-			try {
-				mFrames[i] = ImageIO.read(new File(filenames[i]));
-			} catch (IOException e) {
-				System.err.println("Can't open image '" + filenames[i] + "': " + e.getMessage());
-				mFrames[i] = null;
-			}
+	public AnimatedSprite(byte[] animationFile) {
+		ByteBuffer buffer = ByteBuffer.wrap(animationFile);
+		frames = new BufferedImage [buffer.getShort(0)];
+		frameTime = Math.round(1000.0f / (float) buffer.get(2));
+		
+		int filePointer = 3;
+		for (int i = 0; i < frames.length; i++) {
+			int size = buffer.getInt(filePointer);
+			filePointer += 4;
+			byte[] contents = new byte [size];
+			buffer.get(contents, filePointer, size);
+			
+			try { frames[i] = ImageIO.read(new ByteArrayInputStream(contents)); }
+			catch (IOException e) { e.printStackTrace(); }
 		}
 	}
 
 	public void play() {
-		mPaused = false;
+		paused = false;
 	}
 	
 	public void pause() {
-		mPaused = true;
+		paused = true;
 	}
 	
 	public boolean getPaused() {
-		return mPaused;
+		return paused;
 	}
 	
 	// Go to a specific time in the animation
 	public void goToTime(int ms) {
-		mAnimationTime = ms;
+		animationTime = ms;
 	}
 	
 	public int getAnimationTime() {
-		return mAnimationTime;
+		return animationTime;
 	}
 	
 	// Go to a specific frame in the animation
 	public void goToFrame(int frameNo) {
-		mAnimationTime = frameNo * mFrameTime;
+		animationTime = frameNo * frameTime;
 	}
 	
 	public void setLoop(boolean loop) {
-		mLoop = loop;
+		this.loop = loop;
 	}
 	
 	public boolean isLooping() {
-		return mLoop;
+		return loop;
 	}
 	
 	public int getFrameTime() {
-		return mFrameTime;
+		return frameTime;
 	}
 	
-	// Gets width of first frame
+	// Get width of current frame
 	public int getWidth() {
-		return mFrames[0].getWidth();
+		return frames[frameIndex].getWidth();
 	}
 	
-	// Gets width of first frame
+	// Get height of current frame
 	public int getHeight() {
-		return mFrames[0].getHeight();
+		return frames[frameIndex].getHeight();
 	}
 	
 	public void updateFrameIndex(long dt) {
 		// If the animation has stopped, don't do anything
-		if (mPaused) return;
+		if (paused) return;
 		
-		mAnimationTime += dt;
+		animationTime += dt;
 		
 		// If the animation is beyond the end, then either loop or stop
-		if (mAnimationTime >= mFrameTime * mFrames.length) {
-			if (mLoop) {
-				mAnimationTime %= mFrameTime * mFrames.length;
+		if (animationTime >= frameTime * frames.length) {
+			if (loop) {
+				animationTime %= frameTime * frames.length;
 			} else {
-				mAnimationTime = mFrameTime * mFrames.length - 1;
-				mPaused = true;
+				animationTime = frameTime * frames.length - 1;
+				paused = true;
 			}
 		}
+		
+		frameIndex = Math.min(frames.length - 1, animationTime / frameTime);
 	}
 	
 	public Image getCurrentFrame() {
-		// Get the index of the current frame to draw (or the last one if the animation time is too far)
-		int frameIndex = Math.min(mFrames.length - 1, mAnimationTime / mFrameTime);
-		return mFrames[frameIndex];
+		return frames[frameIndex];
 	}
 }
