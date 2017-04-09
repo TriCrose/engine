@@ -1,24 +1,19 @@
 package states;
 
 import java.awt.Graphics2D;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
+import assets.*;
 import core.*;
-import objects.*;
 
 public class DemoState extends GameState {
 	private float playerX, playerY;
-	private AnimatedSprite stickman;
+	private Animation stickman;
 	
 	public DemoState(GameWindow gw) {
 		super(gw);
 		playerX = 0;
 		playerY = gw.getInnerHeight() - 95;
-		
-		try { stickman = new AnimatedSprite(Files.readAllBytes(Paths.get("anim/stickman.anim"))); }
-		catch (IOException e) { e.printStackTrace(); }
+		stickman = AssetLoader.loadAnimation("anim/stickman.anim");
 	}
 	
 	@Override

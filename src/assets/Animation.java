@@ -1,14 +1,8 @@
-package objects;
+package assets;
 
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 
-import javax.imageio.ImageIO;
-
-public class AnimatedSprite {
+public class Animation {
 	private BufferedImage[] frames;		// Array of frames
 	private final int frameTime;		// Length of each frame in milliseconds
 	private int animationTime = 0;		// Time since start of animation in milliseconds
@@ -16,21 +10,9 @@ public class AnimatedSprite {
 	private boolean loop = true;		// Should the animation loop
 	private int frameIndex;				// Current frame index
 	
-	public AnimatedSprite(byte[] animationFile) {
-		ByteBuffer buffer = ByteBuffer.wrap(animationFile);
-		frames = new BufferedImage [buffer.getShort(0)];
-		frameTime = Math.round(1000.0f / (float) buffer.get(2));
-		
-		int filePointer = 3;
-		for (int i = 0; i < frames.length; i++) {
-			int size = buffer.getInt(filePointer);
-			filePointer += 4;
-			byte[] contents = new byte [size];
-			buffer.get(contents, filePointer, size);
-			
-			try { frames[i] = ImageIO.read(new ByteArrayInputStream(contents)); }
-			catch (IOException e) { e.printStackTrace(); }
-		}
+	public Animation(BufferedImage[] frames, int frameTime) {
+		this.frames = frames.clone();
+		this.frameTime = frameTime;
 	}
 
 	public void play() {
@@ -100,7 +82,7 @@ public class AnimatedSprite {
 		frameIndex = Math.min(frames.length - 1, animationTime / frameTime);
 	}
 	
-	public Image getCurrentFrame() {
+	public BufferedImage getCurrentFrame() {
 		return frames[frameIndex];
 	}
 }
