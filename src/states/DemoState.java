@@ -13,7 +13,7 @@ public class DemoState extends GameState {
 		super(gw);
 		playerX = 0;
 		playerY = gw.getInnerHeight() - 95;
-		stickman = AssetLoader.loadAnimation("anim/stickman.anim");
+		stickman = AssetLoader.loadAnimation("anim/stickman");
 	}
 	
 	@Override

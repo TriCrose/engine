@@ -3,10 +3,10 @@ use strict;
 use warnings;
 
 # merges the individual frames of an animation into a single file
-# 1st 2 bytes - number of files
+# first 2 bytes - number of files
 # next byte - frames per second
 # for each file:
-#   1st 4 bytes - size in bytes
+#   first 4 bytes - size in bytes
 #   remaining bytes - file data
 # files are merged in alphabetical order
 # all numbers are big-endian
