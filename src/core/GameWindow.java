@@ -104,8 +104,9 @@ public class GameWindow extends JFrame {
 			
 			// If a state change is pending then do it now
 			if (nextGameState != null) {
-				gameState = nextGameState;
-				nextGameState = null;
+				if (gameState != null) gameState.destroy();		// First destroy the old one
+				gameState = nextGameState;						// Now select the new one
+				nextGameState = null;							// Set the 'next' one to be null
 			}
 			
 			// Now perform the update-render loop providing we have a valid game state

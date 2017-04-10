@@ -28,4 +28,9 @@ public class DemoState extends GameState {
 		g.fillRect(0, gw.getInnerHeight() - 100, gw.getInnerWidth(), 100);
 		g.drawImage(stickman.getCurrentFrame(), (int) playerX, (int) playerY, null);
 	}
+
+	@Override
+	public void destroy() {
+		
+	}
 }

@@ -11,4 +11,5 @@ public abstract class GameState {
 	
 	public abstract void update(long dt);
 	public abstract void render(Graphics2D g);
+	public abstract void destroy();
 }
