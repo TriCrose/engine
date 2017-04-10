@@ -11,20 +11,21 @@ public class DemoState extends GameState {
 	
 	public DemoState(GameWindow gw) {
 		super(gw);
-		playerX = 0;
-		playerY = gw.getInnerHeight() - 95;
-		stickman = AssetLoader.loadAnimation("anim/stickman");
+		stickman = AssetLoader.loadAnimation("anim/run");
+		playerX = -stickman.getWidth();
+		playerY = gw.getInnerHeight() - stickman.getHeight() - 100;
 	}
 	
 	@Override
 	public void update(long dt) {
-		playerX += (float) dt * 0.1f;
-		if (playerX >= gw.getInnerWidth()) playerX = playerX % gw.getInnerWidth() - 48;
+		playerX += (float) dt * 0.15f;
+		if (playerX >= gw.getInnerWidth()) playerX = playerX % gw.getInnerWidth() - stickman.getWidth();
 		stickman.updateFrameIndex(dt);
 	}
 
 	@Override
 	public void render(Graphics2D g) {
+		g.fillRect(0, gw.getInnerHeight() - 100, gw.getInnerWidth(), 100);
 		g.drawImage(stickman.getCurrentFrame(), (int) playerX, (int) playerY, null);
 	}
 }
