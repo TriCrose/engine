@@ -1,6 +1,7 @@
 package assets;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -9,10 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 
 public class AssetLoader {
 	public static Animation loadAnimation(String filename) {
@@ -40,10 +38,26 @@ public class AssetLoader {
 	
 	public static Clip loadClip(String filename) {
 		try {
+			// Load the audio file from the disk
+			AudioInputStream rawStream = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(filename)));
+			AudioFormat rawFormat = rawStream.getFormat();
+			
+			// Decode it from whatever it was into this format
+			AudioFormat decodedFormat = new AudioFormat(
+				AudioFormat.Encoding.PCM_SIGNED,
+				rawFormat.getSampleRate(),
+				16,
+				rawFormat.getChannels(),
+				rawFormat.getChannels() * 2,
+				rawFormat.getSampleRate(),
+				false
+			);
+			
+			// Return the clip
 			Clip clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(new FileInputStream(filename)));
+			clip.open(AudioSystem.getAudioInputStream(decodedFormat, rawStream));
 			return clip;
-		} catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+		} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 			e.printStackTrace();
 			return null;
 		}

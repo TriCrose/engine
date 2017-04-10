@@ -63,6 +63,11 @@ public class Animation {
 		return frames[frameIndex].getHeight();
 	}
 	
+	// Get current frame index
+	public int getFrameIndex() {
+		return frameIndex;
+	}
+	
 	public void updateFrameIndex(long dt) {
 		// If the animation has stopped, don't do anything
 		if (paused) return;
