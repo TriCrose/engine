@@ -15,6 +15,7 @@ import javax.sound.sampled.*;
 public class AssetLoader {
 	public static Animation loadAnimation(String filename) {
 		try {
+			// TODO: use getResourceAsStream()
 			// Get the file as an array of bytes
 			ByteBuffer animationFile = ByteBuffer.wrap(Files.readAllBytes(Paths.get(filename)));
 			

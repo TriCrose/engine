@@ -11,7 +11,7 @@ public class DemoState extends GameState {
 	
 	public DemoState(GameWindow gw) {
 		super(gw);
-		stickman = AssetLoader.loadAnimation("assets/sprites/stickman");
+		stickman = AssetLoader.loadAnimation("/sprites/stickman");
 		playerX = -stickman.getWidth();
 		playerY = gw.getInnerHeight() - stickman.getHeight() - 100;
 	}
