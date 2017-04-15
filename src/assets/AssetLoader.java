@@ -39,6 +39,8 @@ public class AssetLoader {
 	
 	public static Clip loadClip(String filename) {
 		try {
+			// TODO: use getResourceAsStream()
+			
 			// Load the audio file from the disk
 			AudioInputStream rawStream = AudioSystem.getAudioInputStream(new BufferedInputStream(new FileInputStream(filename)));
 			AudioFormat rawFormat = rawStream.getFormat();
