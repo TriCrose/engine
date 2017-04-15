@@ -26,6 +26,9 @@ public class GameWindow extends JFrame {
 	// Next game state (when transitioning)
 	private GameState nextGameState;
 	
+	// Target FPS
+	private final int frameTime;
+	
 	public void setGameState(GameState gameState) {
 		// Pending game state change
 		nextGameState = gameState;
@@ -47,9 +50,10 @@ public class GameWindow extends JFrame {
 		return getContentPane().getHeight();
 	}
 	
-	public GameWindow(String title, int width, int height, Image icon) {
+	public GameWindow(String title, int width, int height, int FPS, Image icon) {
 		super(title);
 		gameState = nextGameState = null;
+		frameTime = Math.round(1000.0f / (float) FPS);
 		
 		// Setup non-observer keyboard input
 		keyboardState = new HashMap<>();
@@ -115,7 +119,7 @@ public class GameWindow extends JFrame {
 				gamePanel.repaint();
 			}
 			
-			try { Thread.sleep(1); } catch (InterruptedException e) { e.printStackTrace(); }
+			if (dt < frameTime) try { Thread.sleep(frameTime - dt); } catch (InterruptedException e) { e.printStackTrace(); }
 		}
 	}
 }
